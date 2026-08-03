@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join a Yaniv room</title>
+<!--
+  The landing page a share link points at.
+
+  Everything it needs is in the URL fragment (#c=ABC123, plus &k=<password> for a locked room),
+  which a browser never sends to the server — so whoever hosts this page never sees a room code or
+  a password in their access logs, and the page itself can be one static file with no path routing.
+  That matters twice over: GitHub Pages cannot rewrite /r/ABC123 to /r/index.html, so a code in the
+  path would simply 404, and a password in the path or query would be logged by the host.
+
+  Nothing in the app depends on this page existing. On Android the intent-filter claims the URL
+  directly and the app opens without the page ever loading; this is what everyone else sees.
+-->
+<style>
+  :root {
+    --sand: #f3e6c8;
+    --ink: #2b2320;
+    --pink: #d83b73;
+    --cyan: #bfe9f7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: linear-gradient(160deg, var(--cyan), var(--sand));
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    text-align: center;
+  }
+  main { max-width: 26rem; width: 100%; }
+  h1 { font-size: 1.5rem; margin: 0 0 1.5rem; font-weight: 700; }
+  .code {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: clamp(2rem, 12vw, 3.25rem);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    /* The code is data, not prose: keep it left-to-right even for an RTL reader. */
+    direction: ltr;
+    unicode-bidi: isolate;
+    margin: 0 0 0.25rem;
+  }
+  .caption { margin: 0 0 2rem; opacity: 0.7; font-size: 0.9rem; }
+  a.button {
+    display: block;
+    padding: 0.9rem 1.25rem;
+    margin-bottom: 0.75rem;
+    border-radius: 999px;
+    background: var(--pink);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  a.secondary { background: transparent; color: var(--ink); border: 2px solid rgba(43, 35, 32, 0.25); }
+  .missing { font-size: 1.05rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+<main id="root" class="missing">Loading…</main>
+<script>
+  // Mirrors RoomLink.TryParse on the C# side: accept the fragment form the app composes, and the
+  // ?room= query a WebGL tab is launched with. Deliberately dumb about everything else — the app
+  // is the authority on what a code means, this only has to get it there.
+  function readCode() {
+    var params = new URLSearchParams(location.hash.replace(/^#/, ''));
+    var raw = params.get('c') || new URLSearchParams(location.search).get('room') || '';
+    var code = raw.replace(/[\s-]/g, '').toUpperCase();
+    return /^[A-Z0-9]{6}$/.test(code) ? code : null;
+  }
+
+  // The room password, when the link carries one. It has to survive the handoff below or this page
+  // silently strips it and the friend it was sent to gets challenged for a password they were
+  // deliberately spared — which is the entire point of putting it in the link. Unlike the code it is
+  // taken verbatim: a password is case-sensitive and is not restricted to the code alphabet.
+  function readPassword() {
+    var params = new URLSearchParams(location.hash.replace(/^#/, ''));
+    var raw = params.get('k') || new URLSearchParams(location.search).get('k') || '';
+    return raw.length ? raw : null;
+  }
+
+  function render() {
+    var root = document.getElementById('root');
+    var code = readCode();
+
+    if (!code) {
+      root.className = 'missing';
+      root.textContent = 'This invite link is missing its room code. Ask for a new one, ' +
+                         'or open Yaniv and join with the 6-character code.';
+      return;
+    }
+
+    var password = readPassword();
+
+    root.className = '';
+    root.innerHTML =
+      '<h1>You are invited to a Yaniv room</h1>' +
+      '<p class="code"></p>' +
+      '<p class="caption">Room code &mdash; you can type this in the app</p>' +
+      (password ? '<p class="caption">Password: <b class="pw"></b></p>' : '') +
+      '<a class="button" id="open">Open in the Yaniv app</a>' +
+      '<a class="button secondary" id="store">Get the app</a>';
+
+    // textContent, not innerHTML: both of these come from the URL, so they are untrusted input.
+    root.querySelector('.code').textContent = code.slice(0, 3) + ' ' + code.slice(3);
+    // Shown as well as passed on, for the same reason the code is: tapping the button is the happy
+    // path, but someone who has to type the code by hand would otherwise hit a password they were
+    // never told. It is already in the URL they are looking at, so this reveals nothing new.
+    if (password) root.querySelector('.pw').textContent = password;
+
+    document.getElementById('open').href = 'yaniv://room/' + encodeURIComponent(code) +
+      (password ? '?k=' + encodeURIComponent(password) : '');
+
+    // Placeholder until M11 publishes a listing. Pointing it at a search keeps the button honest
+    // rather than dead, and it is one string to change once the package name is real.
+    document.getElementById('store').href =
+      'https://play.google.com/store/search?q=Yaniv&c=apps';
+  }
+
+  render();
+  // A messenger's in-app browser can hand us a new fragment without a reload.
+  window.addEventListener('hashchange', render);
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.talrubin.yaniv",
+      "sha256_cert_fingerprints": [
+        "4C:E6:BB:FB:4F:44:57:26:6E:12:5A:82:1C:E2:8D:A0:E7:2E:64:83:99:3A:54:92:6A:BC:12:A1:28:91:49:58"
+      ]
+    }
+  }
+]
