@@ -1,0 +1,80 @@
+/*
+  Shared by privacy.html, terms.html and delete-data.html.
+
+  The palette is web/link/index.html's, deliberately: these pages and the invite landing page are
+  served from the same host and a player reaching one from the other should not feel handed off to
+  somebody else's site. The layout is not shared, though — the invite page centres one short message
+  in the viewport, and these are documents, so they read as a measured column instead.
+*/
+:root {
+  --sand: #f3e6c8;
+  --ink: #2b2320;
+  --pink: #d83b73;
+  --cyan: #bfe9f7;
+  --rule: rgba(43, 35, 32, 0.15);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 24px;
+  background: linear-gradient(160deg, var(--cyan), var(--sand));
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+main {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 18px;
+}
+
+h1 { font-size: clamp(1.5rem, 6vw, 2rem); margin: 0 0 0.25rem; }
+h2 { font-size: 1.15rem; margin: 2rem 0 0.5rem; }
+h3 { font-size: 1rem; margin: 1.5rem 0 0.35rem; }
+p, li { font-size: 1rem; }
+ul { padding-left: 1.25rem; }
+li { margin-bottom: 0.4rem; }
+
+.updated { margin: 0 0 1.5rem; opacity: 0.65; font-size: 0.9rem; }
+
+a { color: var(--pink); }
+
+/* The one thing on the deletion page a reader must not miss. */
+.callout {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--pink);
+  background: rgba(216, 59, 115, 0.07);
+  border-radius: 0 10px 10px 0;
+}
+
+table { border-collapse: collapse; width: 100%; margin: 0.75rem 0 1rem; }
+th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.7; }
+td code { font-size: 0.9em; }
+
+/* Key names are data, not prose: keep them left-to-right and unbroken. */
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  direction: ltr;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+
+/* Wide tables scroll inside themselves rather than pushing the page sideways on a phone. */
+.scroll { overflow-x: auto; }
+
+footer {
+  max-width: 44rem;
+  margin: 1.5rem auto 0;
+  padding: 0 clamp(1.25rem, 5vw, 2.5rem);
+  font-size: 0.85rem;
+  opacity: 0.7;
+}

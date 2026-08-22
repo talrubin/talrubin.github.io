@@ -80,9 +80,17 @@
   // silently strips it and the friend it was sent to gets challenged for a password they were
   // deliberately spared — which is the entire point of putting it in the link. Unlike the code it is
   // taken verbatim: a password is case-sensitive and is not restricted to the code alphabet.
+  //
+  // The fragment ONLY, and this is the one place the asymmetry with readCode() is deliberate: a
+  // fragment is never transmitted, while a query string is sent to whoever serves this page and lands
+  // in its access logs, any CDN in front of it, and the Referer header of every link clicked from
+  // here. That property is the entire reason RoomLink.Compose puts the password in the fragment, and
+  // accepting ?k= as well quietly gave it away for links nothing in the app ever composes.
+  //
+  // The C# parser still reads ?k=, and should: the only URL it sees carrying one is the yaniv:// URI
+  // composed below, which is a custom scheme that never reaches a server.
   function readPassword() {
-    var params = new URLSearchParams(location.hash.replace(/^#/, ''));
-    var raw = params.get('k') || new URLSearchParams(location.search).get('k') || '';
+    var raw = new URLSearchParams(location.hash.replace(/^#/, '')).get('k') || '';
     return raw.length ? raw : null;
   }
 
