@@ -14,13 +14,18 @@
   yaniv_* storage key appears anywhere in the tree without being accounted for there. So when this
   document and the app disagree, that is a bug in one of them and not a difference of opinion —
   update both together.
+
+  Section 7's event table is the same arrangement against Yaniv.Telemetry.AnalyticsPolicy, which is
+  the single declaration of what may be sent. AnalyticsPolicyTests fails if an event carries a value
+  that is not a number, a flag or one of a fixed set of words — which is what keeps the sentence
+  under that table true as the catalogue grows.
 -->
 </head>
 <body>
 <main>
 
 <h1>Yaniv — Privacy Policy</h1>
-<p class="updated">Last updated 21 August 2026</p>
+<p class="updated">Last updated 23 August 2026</p>
 
 <p>Yaniv is a card game published by Tal Rubin. This policy describes exactly what the app stores
 about you, where it goes, and how to get rid of it. It is written to be checkable rather than
@@ -29,7 +34,9 @@ comprehensive: every item below corresponds to something specific in the app.</p
 <p><strong>The short version.</strong> The app creates an anonymous account for you automatically so
 your trophies survive a reinstall and so other players can see you in a room. It stores your game
 progress and settings. It does not ask for your name, email, phone number or location, and it
-contains no advertising, no analytics and no third-party trackers of any kind.</p>
+contains no advertising and no third-party trackers. It reports crashes to Unity so they can be
+fixed, and it collects usage statistics <strong>only if you switch them on</strong> — see
+section&nbsp;7.</p>
 
 <h2>1. The account</h2>
 
@@ -54,6 +61,7 @@ your device except as part of the cloud sync described in section&nbsp;3.</p>
 <tr><td>Chosen language</td><td><code>yaniv_lang</code></td><td>So the app opens in the language you picked</td></tr>
 <tr><td>Whether you have seen the first-run tips</td><td><code>yaniv_coach_seen</code></td><td>So the tutorial does not repeat forever</td></tr>
 <tr><td>Your friend code</td><td><code>yaniv_friend_code</code></td><td>The code you share so friends can add you</td></tr>
+<tr><td>Whether you turned usage statistics on</td><td><code>yaniv_analytics</code></td><td>Your answer to the switch in section&nbsp;7. It stays on this device and is never mirrored to the cloud</td></tr>
 </table>
 </div>
 
@@ -100,7 +108,49 @@ are online). Adding someone as a friend is visible to them.</p>
 room is waiting for you. These are scheduled by the app on the device itself. No notification is sent
 from a server, and no push token is collected.</p>
 
-<h2>7. What Yaniv does <em>not</em> collect</h2>
+<h2>7. Crash reports and usage statistics</h2>
+
+<p>These are two different things with two different answers, so they are described separately.</p>
+
+<p><strong>Crash reports are always on.</strong> If the app crashes or hits an error it cannot
+recover from, Unity's <strong>Diagnostics</strong> service receives a report so the fault can be
+found and fixed. A report describes the failure and the machine it happened on: the error and its
+stack trace, the version of the app, and the device model and operating system version. It does not
+contain your display name, your player ID, your cards, your room name, or anything you typed.</p>
+
+<p>There is no switch for this inside the app, and we would rather say so than imply otherwise. It
+is set when the app is built rather than at runtime, so it is not something a setting could turn off.
+Without it, a crash on your phone leaves no trace anywhere and cannot be fixed. If you would prefer
+not to send crash reports, uninstalling the app is the way to stop them.</p>
+
+<p><strong>Usage statistics are off unless you turn them on.</strong> Under
+<em>Settings&nbsp;▸&nbsp;Account&nbsp;&amp;&nbsp;privacy</em> there is a switch called
+<em>Share usage data</em>. It starts <strong>off</strong>. Nothing in this paragraph happens until
+you turn it on, and turning it off again stops it.</p>
+
+<p>While it is on, Unity's <strong>Analytics</strong> service receives these four events and nothing
+else:</p>
+
+<div class="scroll">
+<table>
+<tr><th>Event</th><th>What it carries</th></tr>
+<tr><td><code>match_started</code></td><td>Whether the match is local or online, and how many seats are at the table</td></tr>
+<tr><td><code>match_finished</code></td><td>Local or online, how many rounds it lasted, and whether you won</td></tr>
+<tr><td><code>room_created</code></td><td>Whether the room you opened has a password</td></tr>
+<tr><td><code>room_joined</code></td><td>How you reached the room — a share link, the public list, or a typed code</td></tr>
+</table>
+</div>
+
+<p>Every value in that table is a number, a yes/no, or one of a fixed set of words. No event carries
+a name, a room name, a player ID, a friend code, a message, or free text of any kind, and the app has
+an automated check that fails the build if one ever does. Unity also records its own standard session
+information — the app version, device model, operating system and a session identifier — while the
+switch is on.</p>
+
+<p>Turning the switch off stops collection immediately. <em>Delete my data</em> (section&nbsp;11)
+also asks Unity to erase everything already collected.</p>
+
+<h2>8. What Yaniv does <em>not</em> collect</h2>
 
 <p>Stated explicitly, because it is unusually short:</p>
 
@@ -110,11 +160,12 @@ from a server, and no push token is collected.</p>
   <li>No contacts, photos, files, microphone or camera access.</li>
   <li>No payment information — the app has no purchases.</li>
   <li>No advertising, no advertising identifier, and no ad networks.</li>
-  <li>No analytics, no crash reporting, and no third-party trackers or SDKs beyond the Unity Gaming
-      Services described above.</li>
+  <li>No third-party trackers or SDKs beyond the Unity Gaming Services described above. The crash
+      reporting and usage statistics in section&nbsp;7 are Unity services, not a separate analytics
+      vendor, and neither carries anything that identifies you.</li>
 </ul>
 
-<h2>8. Who your data is shared with</h2>
+<h2>9. Who your data is shared with</h2>
 
 <p>Your data is processed by <strong>Unity Technologies</strong>, which operates the authentication,
 Cloud Save, Lobby, Relay and Friends services the app is built on. See
@@ -122,16 +173,18 @@ Cloud Save, Lobby, Relay and Friends services the app is built on. See
 game players</a>.</p>
 
 <p>Beyond Unity and the other players in your room, your data is not sold, rented or shared with
-anyone. There is no advertising partner, no data broker and no analytics vendor.</p>
+anyone. There is no advertising partner and no data broker. The crash reports and usage statistics
+in section&nbsp;7 go to Unity's own Diagnostics and Analytics services under the same processor
+relationship as everything else above — there is no third-party analytics vendor.</p>
 
-<h2>9. Children</h2>
+<h2>10. Children</h2>
 
 <p>Yaniv is not directed to children under 13, and we do not knowingly collect personal information
 from them. Because the app creates only an anonymous account and collects no personal details, there
 is very little to collect either way. If you believe a child has provided information to us, use the
 contact address below and we will delete the associated account.</p>
 
-<h2 id="deleting">10. Deleting your data</h2>
+<h2 id="deleting">11. Deleting your data</h2>
 
 <p>You can delete your account and everything listed above at any time.</p>
 
@@ -143,7 +196,8 @@ contact address below and we will delete the associated account.</p>
 </ul>
 
 <p>Deleting removes the local values in section&nbsp;2, the Cloud Save records in section&nbsp;3, your
-friends and blocks from section&nbsp;5, and the anonymous account itself. It is immediate and cannot
+friends and blocks from section&nbsp;5, any usage statistics already collected under section&nbsp;7,
+and the anonymous account itself. It is immediate and cannot
 be undone: the account is destroyed rather than deactivated, so your trophies do not come back and
 signing in afterwards creates a brand-new guest.</p>
 
@@ -153,18 +207,18 @@ until it is overwritten by their next match or deleted with their account. We do
 any other reason — there is no backup archive, no fraud-prevention store and no regulatory retention
 period applied to this app.</p>
 
-<h2>11. Your rights</h2>
+<h2>12. Your rights</h2>
 
 <p>Depending on where you live, you may have rights to access, correct, or delete the data an app
-holds about you, or to object to its processing. The deletion routes in section&nbsp;10 are
+holds about you, or to object to its processing. The deletion routes in section&nbsp;11 are
 self-service and immediate. For anything else, write to the address below.</p>
 
-<h2>12. Changes to this policy</h2>
+<h2>13. Changes to this policy</h2>
 
 <p>If this policy changes materially, the date at the top will change and the updated version will be
 published here before the change takes effect in a released version of the app.</p>
 
-<h2>13. Contact</h2>
+<h2>14. Contact</h2>
 
 <p>Tal Rubin — <a href="mailto:talrubin1@gmail.com">talrubin1@gmail.com</a></p>
 
@@ -172,6 +226,7 @@ published here before the change takes effect in a released version of the app.<
 <footer>
   <a href="privacy.html">Privacy Policy</a> ·
   <a href="terms.html">Terms of Service</a> ·
+  <a href="licenses.html">Licences</a> ·
   <a href="delete-data.html">Delete my data</a>
 </footer>
 </body>

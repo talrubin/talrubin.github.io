@@ -1,5 +1,5 @@
 /*
-  Shared by privacy.html, terms.html and delete-data.html.
+  Shared by privacy.html, terms.html, licenses.html and delete-data.html.
 
   The palette is web/link/index.html's, deliberately: these pages and the invite landing page are
   served from the same host and a player reaching one from the other should not feel handed off to
@@ -70,6 +70,19 @@ code {
 
 /* Wide tables scroll inside themselves rather than pushing the page sideways on a phone. */
 .scroll { overflow-x: auto; }
+
+/*
+  Verbatim licence text on licenses.html — the OFL and MIT bodies, which are reproduced because those
+  licences require reproducing rather than because anyone reads them straight through. Set smaller and
+  tighter than body prose so a page that is mostly obligation still reads as a page: the parts written
+  for a human stay visually dominant, and the boilerplate is legibly present without taking over.
+*/
+.license-body {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+  opacity: 0.78;
+}
 
 footer {
   max-width: 44rem;
