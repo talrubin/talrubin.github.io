@@ -49,6 +49,8 @@
     margin: 0 0 0.25rem;
   }
   .caption { margin: 0 0 2rem; opacity: 0.7; font-size: 0.9rem; }
+  /* Data like the code, so it keeps its own direction inside a right-to-left caption. */
+  .pw { direction: ltr; unicode-bidi: isolate; }
   a.button {
     display: block;
     padding: 0.9rem 1.25rem;
@@ -66,6 +68,170 @@
 <body>
 <main id="root" class="missing">Loading…</main>
 <script>
+  // The page in the reader's language. It is the first thing an invited player ever sees, and they do
+  // not have the app yet, so it cannot lean on the app's own locale files: these are the same phrases,
+  // in the same wording where the app has one (its room code, its Password caption), kept here so the
+  // page stays one static file. One table per language the app ships (Languages.All); anything else
+  // reads English. The password label carries its own colon and spacing, which differ by language.
+  var STRINGS = {
+    en: {
+      title: 'Join a Yaniv room',
+      missing: 'This invite link is missing its room code. Ask for a new one, or open Yaniv and join with the 6-character code.',
+      invited: 'You are invited to a Yaniv room',
+      caption: 'Room code — you can type this in the app',
+      password: 'Password: ',
+      open: 'Open in the Yaniv app',
+      store: 'Get the app'
+    },
+    he: {
+      title: 'הצטרפות לחדר יניב',
+      missing: 'בקישור ההזמנה הזה חסר קוד החדר. בקשו קישור חדש, או פתחו את יניב והצטרפו עם קוד החדר בן 6 התווים.',
+      invited: 'הוזמנתם לחדר יניב',
+      caption: 'קוד החדר — אפשר להקליד אותו באפליקציה',
+      password: 'סיסמה: ',
+      open: 'פתיחה באפליקציית יניב',
+      store: 'להורדת האפליקציה'
+    },
+    ar: {
+      title: 'انضم إلى غرفة يانيف',
+      missing: 'رابط الدعوة هذا لا يتضمن رمز الغرفة. اطلب رابطًا جديدًا، أو افتح يانيف وانضم برمز الغرفة المكوّن من 6 خانات.',
+      invited: 'أنت مدعو إلى غرفة يانيف',
+      caption: 'رمز الغرفة — يمكنك كتابته في التطبيق',
+      password: 'كلمة المرور: ',
+      open: 'افتح في تطبيق يانيف',
+      store: 'احصل على التطبيق'
+    },
+    es: {
+      title: 'Únete a una sala de Yaniv',
+      missing: 'A este enlace de invitación le falta el código de sala. Pide uno nuevo, o abre Yaniv y únete con el código de sala de 6 caracteres.',
+      invited: 'Te han invitado a una sala de Yaniv',
+      caption: 'Código de sala — puedes escribirlo en la app',
+      password: 'Contraseña: ',
+      open: 'Abrir en la app de Yaniv',
+      store: 'Descargar la app'
+    },
+    fr: {
+      title: 'Rejoindre un salon Yaniv',
+      missing: 'Il manque le code du salon dans ce lien d’invitation. Demandez-en un nouveau, ou ouvrez Yaniv et rejoignez le salon avec le code à 6 caractères.',
+      invited: 'Vous êtes invité dans un salon Yaniv',
+      caption: 'Code du salon — vous pouvez le saisir dans l’application',
+      password: 'Mot de passe : ',
+      open: 'Ouvrir dans l’application Yaniv',
+      store: 'Télécharger l’application'
+    },
+    de: {
+      title: 'Einem Yaniv-Raum beitreten',
+      missing: 'In diesem Einladungslink fehlt der Raumcode. Bitte um einen neuen oder öffne Yaniv und tritt mit dem 6-stelligen Raumcode bei.',
+      invited: 'Du wurdest in einen Yaniv-Raum eingeladen',
+      caption: 'Raumcode — du kannst ihn in der App eingeben',
+      password: 'Passwort: ',
+      open: 'In der Yaniv-App öffnen',
+      store: 'App holen'
+    },
+    ru: {
+      title: 'Комната для игры в Янив',
+      missing: 'В этой ссылке-приглашении нет кода комнаты. Попросите новую ссылку или откройте Янив и войдите по коду комнаты из 6 символов.',
+      invited: 'Вас пригласили в комнату для игры в Янив',
+      caption: 'Код комнаты — его можно ввести в приложении',
+      password: 'Пароль: ',
+      open: 'Открыть в приложении Янив',
+      store: 'Скачать приложение'
+    },
+    pt: {
+      title: 'Entre em uma sala de Yaniv',
+      missing: 'Este link de convite está sem o código da sala. Peça um novo, ou abra o Yaniv e entre com o código da sala de 6 caracteres.',
+      invited: 'Você foi convidado para uma sala de Yaniv',
+      caption: 'Código da sala — você pode digitá-lo no app',
+      password: 'Senha: ',
+      open: 'Abrir no app Yaniv',
+      store: 'Baixar o app'
+    },
+    it: {
+      title: 'Entra in una stanza di Yaniv',
+      missing: 'In questo link d’invito manca il codice stanza. Chiedine uno nuovo, oppure apri Yaniv ed entra con il codice stanza di 6 caratteri.',
+      invited: 'Sei stato invitato in una stanza di Yaniv',
+      caption: 'Codice stanza — puoi digitarlo nell’app',
+      password: 'Password: ',
+      open: 'Apri nell’app Yaniv',
+      store: 'Scarica l’app'
+    },
+    zh: {
+      title: '加入 Yaniv 房间',
+      missing: '此邀请链接缺少房间代码。请向对方索取新链接，或打开 Yaniv，输入6位房间代码加入。',
+      invited: '你受邀加入一个 Yaniv 房间',
+      caption: '房间代码 — 可以在应用中输入',
+      password: '密码：',
+      open: '在 Yaniv 应用中打开',
+      store: '获取应用'
+    },
+    ja: {
+      title: 'Yanivのルームに参加',
+      missing: 'この招待リンクにはルームコードがありません。新しいリンクをもらうか、Yanivを開いて6文字のルームコードで参加してください。',
+      invited: 'Yanivのルームに招待されました',
+      caption: 'ルームコード — アプリで入力できます',
+      password: 'パスワード：',
+      open: 'Yanivアプリで開く',
+      store: 'アプリを入手'
+    },
+    ko: {
+      title: 'Yaniv 방에 참가하기',
+      missing: '이 초대 링크에 방 코드가 없어요. 새 링크를 요청하거나, Yaniv를 열고 6자리 방 코드로 참가하세요.',
+      invited: 'Yaniv 방에 초대받았어요',
+      caption: '방 코드 — 앱에서 입력할 수 있어요',
+      password: '비밀번호: ',
+      open: 'Yaniv 앱에서 열기',
+      store: '앱 받기'
+    },
+    tr: {
+      title: 'Bir Yaniv odasına katıl',
+      missing: 'Bu davet bağlantısında oda kodu yok. Yeni bir bağlantı iste ya da Yaniv’i açıp 6 karakterli oda koduyla katıl.',
+      invited: 'Bir Yaniv odasına davet edildin',
+      caption: 'Oda kodu — uygulamada yazabilirsin',
+      password: 'Şifre: ',
+      open: 'Yaniv uygulamasında aç',
+      store: 'Uygulamayı indir'
+    },
+    id: {
+      title: 'Gabung ke ruang Yaniv',
+      missing: 'Tautan undangan ini tidak memuat kode ruang. Minta tautan baru, atau buka Yaniv dan gabung dengan kode ruang 6 karakter.',
+      invited: 'Kamu diundang ke ruang Yaniv',
+      caption: 'Kode ruang — kamu bisa mengetiknya di aplikasi',
+      password: 'Kata sandi: ',
+      open: 'Buka di aplikasi Yaniv',
+      store: 'Dapatkan aplikasinya'
+    }
+  };
+  var RTL = { he: true, ar: true };
+
+  // The first language in the browser's own preference list that has a table. Only the primary subtag
+  // counts (pt-BR and pt-PT both read pt, zh-TW reads zh, as Languages.FromSystemLanguage folds them),
+  // and the two retired ISO codes some Android builds still report are read as what they mean.
+  function pickLanguage() {
+    var wanted = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i] || '').toLowerCase().split('-')[0];
+      if (code === 'iw') code = 'he';
+      if (code === 'in') code = 'id';
+      if (STRINGS.hasOwnProperty(code)) return code;
+    }
+    return 'en';
+  }
+
+  var LANG = pickLanguage();
+  var T = STRINGS[LANG];
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = RTL[LANG] ? 'rtl' : 'ltr';
+  document.title = T.title;
+
+  // Every string on the page goes in as text, never as markup: the translations are ours, but the code
+  // and the password come from the URL, and one way of building the page keeps both safe.
+  function el(tag, className, text) {
+    var e = document.createElement(tag);
+    if (className) e.className = className;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
   // Mirrors RoomLink.TryParse on the C# side: accept the fragment form the app composes, and the
   // ?room= query a WebGL tab is launched with. Deliberately dumb about everything else — the app
   // is the authority on what a code means, this only has to get it there.
@@ -100,36 +266,38 @@
 
     if (!code) {
       root.className = 'missing';
-      root.textContent = 'This invite link is missing its room code. Ask for a new one, ' +
-                         'or open Yaniv and join with the 6-character code.';
+      root.textContent = T.missing;
       return;
     }
 
     var password = readPassword();
 
     root.className = '';
-    root.innerHTML =
-      '<h1>You are invited to a Yaniv room</h1>' +
-      '<p class="code"></p>' +
-      '<p class="caption">Room code &mdash; you can type this in the app</p>' +
-      (password ? '<p class="caption">Password: <b class="pw"></b></p>' : '') +
-      '<a class="button" id="open">Open in the Yaniv app</a>' +
-      '<a class="button secondary" id="store">Get the app</a>';
-
-    // textContent, not innerHTML: both of these come from the URL, so they are untrusted input.
-    root.querySelector('.code').textContent = code.slice(0, 3) + ' ' + code.slice(3);
+    root.textContent = '';
+    root.appendChild(el('h1', null, T.invited));
+    root.appendChild(el('p', 'code', code.slice(0, 3) + ' ' + code.slice(3)));
+    root.appendChild(el('p', 'caption', T.caption));
     // Shown as well as passed on, for the same reason the code is: tapping the button is the happy
     // path, but someone who has to type the code by hand would otherwise hit a password they were
     // never told. It is already in the URL they are looking at, so this reveals nothing new.
-    if (password) root.querySelector('.pw').textContent = password;
+    if (password) {
+      var line = el('p', 'caption', T.password);
+      line.appendChild(el('b', 'pw', password));
+      root.appendChild(line);
+    }
 
-    document.getElementById('open').href = 'yaniv://room/' + encodeURIComponent(code) +
+    var open = el('a', 'button', T.open);
+    open.id = 'open';
+    open.href = 'yaniv://room/' + encodeURIComponent(code) +
       (password ? '?k=' + encodeURIComponent(password) : '');
+    root.appendChild(open);
 
     // Placeholder until M11 publishes a listing. Pointing it at a search keeps the button honest
     // rather than dead, and it is one string to change once the package name is real.
-    document.getElementById('store').href =
-      'https://play.google.com/store/search?q=Yaniv&c=apps';
+    var store = el('a', 'button secondary', T.store);
+    store.id = 'store';
+    store.href = 'https://play.google.com/store/search?q=Yaniv&c=apps';
+    root.appendChild(store);
   }
 
   render();
