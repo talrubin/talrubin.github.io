@@ -15,6 +15,9 @@
     - names the app or developer as on the
       store listing ........................... "Yaniv" and "Tal Rubin", in the first line and the
                                                 contact section
+    - says which data is deleted and which is
+      kept, and for how long .................. "What gets deleted" and "What we keep", in the
+                                                privacy policy's wording (section 11)
 
   IMPORTANT: the app name and developer name below must match the Play store listing exactly. If the
   listing ends up published under a different developer name, change it here too or the page stops
@@ -25,7 +28,7 @@
 <main>
 
 <h1>Delete my Yaniv data</h1>
-<p class="updated">Yaniv, published by Tal Rubin · Last updated 21 August 2026</p>
+<p class="updated">Yaniv, published by Tal Rubin · Last updated 3 October 2026</p>
 
 <p>This page is how you delete your Yaniv account and everything stored with it, without needing the
 app installed.</p>
@@ -36,7 +39,7 @@ app installed.</p>
   immediate and needs no email and no waiting.</p>
 </div>
 
-<h2>If you no longer have the app</h2>
+<h2 id="no-app">If you no longer have the app</h2>
 
 <p>Send an email to <a href="mailto:talrubin1@gmail.com?subject=Yaniv%20account%20deletion%20request">talrubin1@gmail.com</a>
 with the subject <strong>Yaniv account deletion request</strong>.</p>
@@ -54,6 +57,11 @@ the right account we need something that identifies it. Include whichever of the
 <p>If you have none of these, say so in the email and we will do what we can — but be aware that an
 anonymous account with no identifying detail may genuinely be impossible to locate, in which case we
 will tell you that rather than delete someone else's.</p>
+
+<p>The same email can ask us to delete a player report (see <a href="#keep">What we keep</a>): one that
+names your account, or one you sent. To help us find it, include the reported player's display name,
+roughly when the report was sent, and, if you sent it, the email address you sent it from. This is the
+only route that reaches a report, whether or not you still have the app.</p>
 
 <h2>What happens next</h2>
 
@@ -83,13 +91,26 @@ installed, use the in-app route above, which clears the device as well.</p>
 <p>Yaniv has no purchases and no subscriptions, so there is nothing to cancel first. Deletion is free
 and unconditional.</p>
 
-<h2>What we keep</h2>
+<h2 id="keep">What we keep</h2>
 
-<p>Nothing. There is no backup archive, no fraud-prevention store and no regulatory retention period
-applied to this app. The one exception is described in
-<a href="privacy.html#deleting">the privacy policy</a>: if another player hosted a match you played in, their
-own resume snapshot may still record that match until it is overwritten or their account is deleted.
-We keep your deletion request email itself only as long as it takes to act on it and confirm.</p>
+<p>There is no backup archive, no fraud-prevention store and no regulatory retention period applied to
+this app. Two things can outlive a deletion, both described in
+<a href="privacy.html#deleting">the privacy policy</a>:</p>
+
+<ul>
+  <li><strong>Another player's resume snapshot.</strong> If another player was hosting a match you took
+      part in, their own match resume snapshot may still contain a record of that match, including
+      your seat, until it is overwritten by their next match or deleted with their account.</li>
+  <li><strong>A report you or another player sent.</strong> The <em>Report</em> action opens a draft
+      email addressed to the contact address below; nothing is sent until the sender sends it from
+      their own email app. A sent report holds the reported player's id and display name, the room
+      code, a UTC timestamp, the app version and whatever the sender wrote. It does not include the
+      sender's player id, though the sender's email address is on any email. It stays in that
+      mailbox, and the in-app <em>Delete my data</em> cannot remove it. If a report names you or you
+      sent one, ask for it to be deleted by email, as <a href="#no-app">above</a>.</li>
+</ul>
+
+<p>We keep your deletion request email itself only as long as it takes to act on it and confirm.</p>
 
 <h2>Deletion is permanent</h2>
 
